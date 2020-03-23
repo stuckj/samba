@@ -4,7 +4,6 @@
 
 This container is based on [dperson/samba](https://hub.docker.com/r/dperson/samba). I only added one
 option to allow the user to not be forced to smbuser. All credit goes to him. :)
-If he merges my option back into his repo I will likely delete this container.
 
 # Samba
 
