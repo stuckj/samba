@@ -2,4 +2,4 @@ version: "1"
 rules:
   - base: master
     upstream: dperson:master
-    mergeMethod: rebase
+    mergeMethod: merge
