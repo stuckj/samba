@@ -75,6 +75,7 @@ perms() { local i file=/etc/samba/smb.conf
         find $i -type f ! -perm 0664 -exec chmod 0664 {} \;
     done
 }
+export -f perms
 
 ### recycle: disable recycle bin
 # Arguments:
@@ -106,9 +107,9 @@ share() { local share="$1" path="$2" browsable="${3:-yes}" ro="${4:-yes}" \
     echo "   read only = $ro" >>$file
     echo "   guest ok = $guest" >>$file
     [[ ${VETO:-yes} == no ]] || {
-        echo -n "   veto files = /._*/.apdisk/.AppleDouble/.DS_Store/" >>$file
-        echo -n ".TemporaryItems/.Trashes/desktop.ini/ehthumbs.db/" >>$file
-        echo "Network Trash Folder/Temporary Items/Thumbs.db/" >>$file
+        echo -n "   veto files = /.apdisk/.DS_Store/.TemporaryItems/" >>$file
+        echo -n ".Trashes/desktop.ini/ehthumbs.db/Network Trash Folder/" >>$file
+        echo "Temporary Items/Thumbs.db/" >>$file
         echo "   delete veto files = yes" >>$file
     }
     [[ ${users:-""} && ! ${users:-""} == all ]] &&
@@ -128,7 +129,7 @@ share() { local share="$1" path="$2" browsable="${3:-yes}" ro="${4:-yes}" \
 #   none)
 # Return: result
 smb() { local file=/etc/samba/smb.conf
-    sed -i '/\([^#]*min protocol *=\).*/\1 LANMAN1/' $file
+    sed -i 's/\([^#]*min protocol *=\).*/\1 LANMAN1/' $file
 }
 
 ### user: add a user
@@ -279,7 +280,7 @@ done < <(env | awk '/^USER[0-9=_]/ {sub (/^[^=]*=/, "", $0); print}')
 [[ "${INCLUDE:-""}" ]] && include "$INCLUDE"
 [[ "${NOFORCEUSER:-""}" ]] && noforceuser
 [[ "${NOFORCEGROUP:-""}" ]] && noforcegroup
-[[ "${PERMISSIONS:-""}" ]] && perms
+[[ "${PERMISSIONS:-""}" ]] && perms &
 
 if [[ $# -ge 1 && -x $(which $1 2>&-) ]]; then
     exec "$@"
